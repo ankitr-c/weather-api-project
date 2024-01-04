@@ -37,7 +37,7 @@ pipeline {
             // }
             steps{
                 echo "Build Stage"
-                sh"
+                sh "
                 echo ${env.NEW_VERSION}
                 "
                 // echo "Building Version ${NEW_VERSION}"
