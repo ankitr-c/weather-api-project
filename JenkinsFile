@@ -7,7 +7,7 @@ pipeline {
         stage("Code") {
             steps{
                 echo "Code Stage"
-            //  git branch: 'main', credentialsId: 'git-pat', url: 'https://github.com/ankitr-c/weather-api-project.git'
+                git branch: 'main', credentialsId: 'git-pat', url: 'https://github.com/ankitr-c/weather-api-project.git'
             }
             
         }
@@ -20,6 +20,11 @@ pipeline {
         stage("Push") {
             steps{
             echo "Push Stage"
+            withCredentials([usernamePassword(credentialsId: 'dockercred', passwordVariable: 'pass', usernameVariable: 'user')]) {
+                sh "docker login -u ${env.user} -p ${env.pass}"
+                sh "docker push ankitraut0987/weatherapp:1.0.0.RELEASE"
+            }
+
             }
         }
         stage("Deploy") {
