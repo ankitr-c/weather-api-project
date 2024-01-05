@@ -14,7 +14,7 @@ pipeline {
         stage("Build") {
             steps{
             echo "Build Stage"
-            sh "sudo docker build -t ankitraut0987/weatherapp:1.0.0.RELEASE ."
+            sh "docker build -t ankitraut0987/weatherapp:1.0.0.RELEASE ."
             }
         }
         stage("Push") {
