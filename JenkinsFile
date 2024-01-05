@@ -1,114 +1,32 @@
-def gv
 pipeline {
-    
-    agent any
-    
-
-    parameters{
-        string(name: 'DATA', defaultValue: '', description: 'Desc')
-        choice(name: 'VERSION', choices: ['1.1.0','1.2.0','1.3.0'],description: 'Desc')
-        booleanParam(name: 'executeTest', defaultValue: true, description: 'Desc')
-
-    }
-
-
-    // tools {
-    //     maven 'Maven'
-    //     gradle 'Tool Name In Global Tools config jenkins'
+    // agent{
+    //     label
     // }
-
-    environment {
-        NEW_VERSION='1.3.0'
-    //     SERVER_CREDENTIALS = credentials('server-credentials') // to access the credentials in all the stages
-    }
-
-    stages{
-        
- //       stage("Checkout"){
- //           steps{
- //               echo "Checkout Stage"
- //           }
-
- //       }
-        stage("Init"){
+    agent any
+    stages {
+        stage("Code") {
             steps{
-                script {
-                  gv = load "script.groovy"  
-                }
+                echo "Code Stage"
+            //  git branch: 'main', credentialsId: 'git-pat', url: 'https://github.com/ankitr-c/weather-api-project.git'
+            }
+            
+        }
+        stage("Build") {
+            steps{
+            echo "Build Stage"
+            sh "sudo docker build -t ankitraut0987/weatherapp:1.0.0.RELEASE ."
             }
         }
-        stage("Build"){
-            // when{
-            //     expression {
-            //         env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'master' 
-            //     }
-            // }
+        stage("Push") {
             steps{
-                echo "Build Stage"
-                echo "${params.DATA}"
-                echo "${params.VERSION}"
-                echo "${params.executeTest}"
-                // sh "echo ${env.NEW_VERSION}"
-                // echo "Building Version ${NEW_VERSION}"
-                script {
-                    gv.buildApp()
-
-                }
+            echo "Push Stage"
             }
         }
-        
-        stage("Test"){
-            // when{
-            //     expression {
-                    // env.BRANCH_NAME == 'main' && CODE_CHANGES == true 
-            //     }
-            // }
+        stage("Deploy") {
             steps{
-                echo "Test Stage"           
-                script {
-                    gv.testApp()
-                }
+            echo "Deploy Stage"
             }
         }
-        
-        stage("Deploy"){
-
-            when{
-                expression {
-                    params.executeTests == true
-                    // params.executeTests
-                }
-            }
-
-            steps{
-                echo "Deploy Stage"
-                withCredentials([
-                    usernamePassword(credentials: 'server-credentials', usernameVariable: USER, passwordVariable: PWD)
-                ]) {
-                    // sh "
-                    // some script ${USER}:${PWD}@
-                    // " 
-                }
-                echo "deploying version ${params.VERSION}"
-            }
-        }
-
-        stage("CleanUp"){
-            steps{
-                echo "CleanUp Stage"
-            }
-        }
-        // post{
-        //     always {
-                
-        //     }
-        //     success {
-
-        //     }
-        //     failure {
-
-        //     }
-
-        // }
     }
 }
+

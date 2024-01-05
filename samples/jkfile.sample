@@ -1,6 +1,8 @@
+def gv
 pipeline {
     
     agent any
+    
 
     parameters{
         string(name: 'DATA', defaultValue: '', description: 'Desc')
@@ -28,7 +30,13 @@ pipeline {
  //           }
 
  //       }
-        
+        stage("Init"){
+            steps{
+                script {
+                  gv = load "script.groovy"  
+                }
+            }
+        }
         stage("Build"){
             // when{
             //     expression {
@@ -37,8 +45,15 @@ pipeline {
             // }
             steps{
                 echo "Build Stage"
-                sh "echo ${env.NEW_VERSION}"
+                echo "${params.DATA}"
+                echo "${params.VERSION}"
+                echo "${params.executeTest}"
+                // sh "echo ${env.NEW_VERSION}"
                 // echo "Building Version ${NEW_VERSION}"
+                script {
+                    gv.buildApp()
+
+                }
             }
         }
         
@@ -50,6 +65,9 @@ pipeline {
             // }
             steps{
                 echo "Test Stage"           
+                script {
+                    gv.testApp()
+                }
             }
         }
         
@@ -57,19 +75,19 @@ pipeline {
 
             when{
                 expression {
-                    // params.executeTests == true
-                    params.executeTests
+                    params.executeTests == true
+                    // params.executeTests
                 }
             }
 
             steps{
                 echo "Deploy Stage"
                 withCredentials([
-                    usernamePassword(credentials: 'server-credentials', usernameVariable: USER, passwordVariable: PWD)
+                    usernamePassword(credentialsId: 'server-credentials', usernameVariable: USER, passwordVariable: PWD)
                 ]) {
-                    sh "
-                    some script ${USER}:${PWD}@
-                    " 
+                    // sh "
+                    // some script ${USER}:${PWD}@
+                    // " 
                 }
                 echo "deploying version ${params.VERSION}"
             }
