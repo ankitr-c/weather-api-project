@@ -14,15 +14,15 @@ pipeline {
         stage("Build") {
             steps{
             echo "Build Stage"
-            sh "docker build -t ankitraut0987/weatherapp:1.0.0.RELEASE ."
+            sh "sudo docker build -t ankitraut0987/weatherapp:1.0.0.RELEASE ."
             }
         }
         stage("Push") {
             steps{
             echo "Push Stage"
             withCredentials([usernamePassword(credentialsId: 'dockercred', passwordVariable: 'pass', usernameVariable: 'user')]) {
-                sh "docker login -u ${env.user} -p ${env.pass}"
-                sh "docker push ankitraut0987/weatherapp:1.0.0.RELEASE"
+                sh "sudo docker login -u ${env.user} -p ${env.pass}"
+                sh "sudo docker push ankitraut0987/weatherapp:1.0.0.RELEASE"
             }
 
             }
@@ -30,7 +30,7 @@ pipeline {
         stage("Deploy") {
             steps{
             echo "Deploy Stage"
-            sh "docker-compose down && docker-compose up -d"
+            sh "sudo docker-compose down && sudo docker-compose up -d"
             }
         }
     }
